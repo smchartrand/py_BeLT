@@ -1,3 +1,4 @@
+import matplotlib
 import numpy as np
 import shelve
 import argparse
@@ -8,6 +9,7 @@ import plotting
 
 
 def main(filename, save_location, iter_min, iter_max):
+    matplotlib.rcParams['agg.path.chunksize'] = 100000000
     # Path to run-info file
     fp_in = filename
     # Path to output directory
@@ -34,18 +36,26 @@ def main(filename, save_location, iter_min, iter_max):
         subregion_max = shelf['param']['num_subregions']
         ds_boundary_key = f'subregion-{subregion_max-1}-flux' 
 
-        # # Plot streambed
-        for iter in range(iteration_range[0], iteration_range[1]+1):
-            plotting.stream(iter, np.array(shelf['bed']), np.array(shelf[str(iter)][0]), 
-                            shelf['param']['x_max'], y_limit, np.array(shelf[str(iter)][1]), fp_out)
+        # # # Plot streambed
+        # # for iter in range(iteration_range[0], iteration_range[1]+1):
+        # #     plotting.stream(iter, np.array(shelf['bed']), np.array(shelf[str(iter)][0]), 
+        # #                     shelf['param']['x_max'], y_limit, np.array(shelf[str(iter)][1]), fp_out)
        
-        # Flux and age information at Downstream boundary
-        plotting.flux_info(shelf[ds_boundary_key], shelf['param']['n_iterations'], 1000, fp_out)
-        plotting.flux_info2(shelf[ds_boundary_key], np.array(shelf['avg_age']), shelf['param']['n_iterations'], 1000, fp_out)
-        plotting.flux_info3(shelf[ds_boundary_key], np.array(shelf['avg_age']), np.array(shelf['age_range']), 
-                            shelf['param']['n_iterations'], 1000, fp_out)
+        # # Flux and age information at Downstream boundary
+        # plotting.flux_info(shelf[ds_boundary_key], shelf['param']['n_iterations'], 1, fp_out)
+        # plotting.flux_info2(shelf[ds_boundary_key], np.array(shelf['avg_age']), shelf['param']['n_iterations'], 1, fp_out)
+        # plotting.flux_info3(shelf[ds_boundary_key], np.array(shelf['avg_age']), np.array(shelf['age_range']), 
+        #                     shelf['param']['n_iterations'], 1, fp_out)
         
-        plotting.heat_map(shelf, shelf['param']['n_iterations'], 1000, fp_out)
+       
+        elev_metric_p = f'Analysis/sim33/sim38-elevationMetric-dimensionless.out'
+        avg_age_p = f'Analysis/sim33/sim38-avgage.out'
+        age_range_p = f'Analysis/sim33/sim38-agerange.out'
+        flux_p = f'Analysis/sim33/sim38-fullflux.out'
+
+        plotting.binned_age_vs_elevations_metrics(f'Simulation_38_Dimensionless', f'./sim38-new', avg_age_p, age_range_p, flux_p, elev_metric_p)
+        
+        # plotting.heat_map(shelf, shelf['param']['n_iterations'], 0, fp_out)
 
         ## Dynamic System Idea plotting below:
         # total_flux = np.zeros(1000000)
